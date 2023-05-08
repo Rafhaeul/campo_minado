@@ -1,11 +1,18 @@
 import tkinter.messagebox
 from tkinter import *
 from random import *
+import json
+import datetime as dt
+
 
 # TODO 03: Criar modo de vencer após apontar todas a bombas
 # TODO 05: Criar registro de pontuação com pandas (nome, pontuação, data, hora e colocar na ordem decrescente)
 import registro_pontos
 
+dia = dt.datetime.now().day
+mes = dt.datetime.now().month
+ano = dt.datetime.now().year
+data_hoje = f'{dia}/{mes}/{ano}'
 
 def iniciar():
     jogador = inserir_nome.get()
@@ -42,9 +49,8 @@ def iniciar():
     # //////////////////////////// Menssagem de GAMEOVER e reinicio \\\\\\\\\\\\\\\\\\\\\\\\\
 
     def show_message(r):
-        informacao = desativadas
-        best = registro_pontos.registrar(informacao)
-        tkinter.messagebox.showwarning(title="GAME OVER", message=f"{jogador}, Voce perdeu!\nSua pontuação: {desativadas} \nO recorde é: {best}")
+        recordista, pontos = registro_pontos.registrar(jogador, desativadas, data_hoje)
+        tkinter.messagebox.showwarning(title="GAME OVER", message=f"{jogador}, Voce perdeu!\nSua pontuação: {desativadas} \nO recorde é de {recordista}, com {pontos} pontos")
         for i in range(linhas * colunas):
             campo = lista[i]
             campo.destroy()
@@ -293,6 +299,7 @@ inserir_nome = Entry(width=20)
 inserir_nome.insert(0, "Insira seu nome")
 inserir_nome.grid(row=4,column=0, columnspan=1)
 inserir_nome.bind('<FocusIn>', eliminar_texto)
+
 
 ok_button = Button(text="Começar!", padx=5, pady=5, command=iniciar).grid(row=5, column=1)
 

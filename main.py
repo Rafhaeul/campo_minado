@@ -3,9 +3,9 @@ from tkinter import *
 from random import *
 import json
 import datetime as dt
+import testar_flags as tf
 
 
-# TODO 03: Criar modo de vencer após apontar todas a bombas
 # TODO 05: Criar registro de pontuação com pandas (nome, pontuação, data, hora e colocar na ordem decrescente)
 import registro_pontos
 
@@ -14,7 +14,10 @@ mes = dt.datetime.now().month
 ano = dt.datetime.now().year
 data_hoje = f'{dia}/{mes}/{ano}'
 
+desativadas = 0
+
 def iniciar():
+
     jogador = inserir_nome.get()
     janela_inicial.destroy()
     nivel = var.get()
@@ -32,6 +35,9 @@ def iniciar():
     else:
         linhas = 13
         colunas = 25
+
+    global lista_flag                   #Para usar na função verificar()
+    lista_flag = [0]*linhas*colunas
 
     tela = Canvas(height=110, width=colunas * 38, bg="#ff9900", highlightthickness=0)
     tela.grid(row=0, column=0, columnspan=colunas)
@@ -74,6 +80,17 @@ def iniciar():
             else:
                 event.widget.configure(bg='green', fg='green', height=18, width=28, image='')
 
+        # TODO 03: Criar modo de vencer após apontar todas a bombas
+        if lista_flag[event.widget.cget("text")] == 0:
+            lista_flag[event.widget.cget("text")] = 1
+        else:
+            lista_flag[event.widget.cget("text")] = 0
+
+        # if desativadas > alguma valor dependende do tamanho( dificuldade)
+        venceu = tf.verificar(lista_bombas,lista_flag)
+        if venceu:
+            tkinter.messagebox.showwarning(title="PARABENS", message=f"{jogador}, Voce encontrou todas a bombas!")
+            quit()
     # /////////////// Campo clicado, vai verificar se há bomba e, caso negativo, verificar quantas ao redor \\\\\\\\\\\\
 
     def clicado(r):
